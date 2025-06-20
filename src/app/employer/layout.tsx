@@ -1,38 +1,44 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { 
-    SidebarMenu,
-    SidebarMenuItem,
-    SidebarMenuButton,
     SidebarGroup,
+    SidebarGroupContent,
+    SidebarGroupAction,
+    SidebarGroupLabel,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { LogInIcon } from "lucide-react";
-import { SignedOut } from "@/services/clerk/components/SignInStatus";
-import { SidebarUserButton } from "@/features/users/components/SidebarUserButton";
+import { ClipboardListIcon, PlusIcon } from "lucide-react";
+import { SidebarNavMenuGroup } from '@/components/sidebar/SidebarNavMenuGroup';
 import AppSidebar from '@/components/sidebar/AppSidebar';
 
 const EmployerLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <AppSidebar
         content={
-            <SidebarGroup>
-                <SidebarMenu>
-                    <SignedOut>
-                        <SidebarMenuItem>
-                            <SidebarMenuButton asChild>
-                                <Link href="/sign-in">
-                                    <LogInIcon />
-                                    <span>Log In</span>
-                                </Link>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-                    </SignedOut>
-                </SidebarMenu>
-            </SidebarGroup>
+            <>
+                <SidebarGroup>
+                    <SidebarGroupLabel>Job Listings</SidebarGroupLabel>
+                    <SidebarGroupAction title="Add Job Listing" asChild>
+                        <Link href="/employer/job-listings/new">
+                            <PlusIcon /> <span className="sr-only">Add Job Listing</span>
+                        </Link>
+                    </SidebarGroupAction>
+                    <SidebarGroupContent className="group-data-[state=collapsed]:hidden">
+                        <Suspense>
+                            <JobListingMenu orgId={orgId} />
+                        </Suspense>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+                <SidebarNavMenuGroup
+                    className="mt-auto"
+                    items={[
+                        { href: "/", icon: <ClipboardListIcon />, label: "Job Board" },
+                    ]}
+                />
+            </>
         }
-        footerButton={<SidebarUserButton />}
-    >   
-        {children}
+        footerButton={<SidebarOrganizationButton />}
+    >
+      {children}
     </AppSidebar>
   )
 }
