@@ -5,6 +5,8 @@ import { eq } from "drizzle-orm";
 
 export async function insertUser(user: typeof UserTable.$inferInsert) {
     await db.insert(UserTable).values(user).onConflictDoNothing();
+
+    revalidateUserCache(user.id);
 }
 
 export async function updateUser(id: string, user: Partial<typeof UserTable.$inferInsert>) {
